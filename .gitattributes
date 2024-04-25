@@ -1,0 +1,5 @@
+*.jl !text !filter !merge !diff
+*.md !text !filter !merge !diff
+.git* !text !filter !merge !diff
+*.png !text !filter !merge !diff
+LICENSE !text !filter !merge !diff
