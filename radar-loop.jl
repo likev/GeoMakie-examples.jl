@@ -1,8 +1,8 @@
 using Dates, Downloads, FileIO, CairoMakie
 
 timezone = 8
-date1 = DateTime("2024-04-27 14:30", dateformat"yyyy-mm-dd HH:MM") - Hour(timezone)
-date2 = DateTime("2024-04-27 15", dateformat"yyyy-mm-dd HH") - Hour(timezone)
+date1 = DateTime("2024-04-27 13:00", dateformat"yyyy-mm-dd HH:MM") - Hour(timezone)
+date2 = DateTime("2024-04-27 17:00", dateformat"yyyy-mm-dd HH:MM") - Hour(timezone)
 
 to2(m) = m > 9 ? "$m" : "0$m"
 
@@ -28,11 +28,24 @@ end
 
 time = Observable(0)
 
-img = @lift(getLargeStc("ASCN", date1 + Minute($time))
-            |> (src -> Downloads.download("https://current.sinaapp.com/CORS/?csurl=" * encodeURIComponent0(src), IOBuffer()))
-            |> load
-            |> rotr90)
-
+# https://docs.makie.org/stable/explanations/nodes/
+lastimg = nothing
+img = @lift begin
+    try
+        src = getLargeStc("ASCN", date1 + Minute($time)) 
+        io = Downloads.download("https://current.sinaapp.com/CORS/?csurl=" * encodeURIComponent0(src), IOBuffer())
+        f = load(io)
+        # println(typeof(f)) # Matrix{ColorTypes.RGBA{FixedPointNumbers.N0f8}}
+        global lastimg = rotr90(f)
+    catch e
+        if isa(e, RequestError)
+            println("Error with the request: ", e)
+        else
+            println("Other error: ", e) # or e.msg
+        end  
+    end
+    lastimg
+end
 
 fig = Figure(; backgroundcolor=RGBf(0.98, 0.98, 0.98), size=(1000, 1000))
 
@@ -47,24 +60,3 @@ framerate = 1
 record(fig, "time_animation.mp4", timestamps; framerate) do t
     time[] = t
 end
-#=
-
-time = Observable(0.0)
-
-xs = range(0, 7, length=40)
-
-ys_1 = @lift(sin.(xs .- $time))
-ys_2 = @lift(cos.(xs .- $time) .+ 3)
-
-fig = lines(xs, ys_1, color = :blue, linewidth = 4,
-    axis = (title = @lift("t = $(round($time, digits = 1))"),))
-scatter!(xs, ys_2, color = :red, markersize = 15)
-
-framerate = 30
-timestamps = range(0, 2, step=1/framerate)
-
-record(fig, "time_animation.mp4", timestamps;
-        framerate = framerate) do t
-    time[] = t
-end
-=#
