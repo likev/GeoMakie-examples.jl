@@ -57,6 +57,7 @@ image!(ax1, img)
 timestamps = 0:6:Minute(date2 - date1).value
 framerate = 1
 
+# https://docs.makie.org/stable/api/#record
 record(fig, "time_animation.mp4", timestamps; framerate) do t
     time[] = t
 end
