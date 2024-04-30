@@ -1,3 +1,9 @@
+*.gitignore filter=lfs diff=lfs merge=lfs -text
+/LICENSE filter=lfs diff=lfs merge=lfs -text
+*.md filter=lfs diff=lfs merge=lfs -text
+*.png filter=lfs diff=lfs merge=lfs -text
+*.jl filter=lfs diff=lfs merge=lfs -text
+*.mp4 filter=lfs diff=lfs merge=lfs -text
 *.jl !text !filter !merge !diff
 *.md !text !filter !merge !diff
 .git* !text !filter !merge !diff
