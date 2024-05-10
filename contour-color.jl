@@ -15,6 +15,11 @@ xs = -5:5
 ys = -5:5
 zs = [x^2 + y^2 for x in xs, y in ys]
 
+#=
+using aspect will always cause gaps, unless the layout cell where the Axis lives happens to have exactly the correct aspect ratio by chance. 
+This means aspect should only be used if the whitespace caused by it does not matter too much.
+    https://docs.makie.org/stable/tutorials/aspect-tutorial/
+=#
 ax2 = Axis(ga[1,2], aspect = AxisAspect(1), title = "AxisAspect(1) contour-Spectral_5")
 cf2 = contour!(ax2, xs, ys, zs, levels=[i^2 for i in 1:5], color=colorschemes[:Spectral_5][1:5]) 
 
@@ -22,15 +27,17 @@ text!(ax2, 0, 5, text = "contour-Spectral_5", align = (:center, :bottom), offset
 
 limits!(ax2, -5, 5, -5, 7)
 
-ax3 = Axis(gb[1,1], aspect = AxisAspect(1), title = "AxisAspect(1) contourf-Spectral_5")
+ax3 = Axis(gb[1,1], title = "contourf-Spectral_5")
 cf3 = contourf!(ax3, xs, ys, zs, levels=[i^2 for i in 1:5], colormap=colorschemes[:Spectral_5][1:4])
 
 text!(ax3, 0, 5, text = "contourf-Spectral_5", align = (:center, :bottom), offset = (0, 30))
 
 limits!(ax3, -5, 5, -5, 7)
 
+colsize!(gb, 1, Aspect(1, 1.0))
+
 Colorbar(gb[1,2], cf3 ; label = "contourf-Spectral_5", ticks =[i^2 for i in 1:5], alignmode=Mixed())
 
-colgap!(gb, 1, 10)
+colgap!(gb, 1, 30)
 
 save("scatter20.png", current_figure())
