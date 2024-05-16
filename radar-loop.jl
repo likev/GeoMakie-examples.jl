@@ -1,14 +1,14 @@
 using Dates, Downloads, FileIO, CairoMakie
 
 timezone = 8
-date1 = DateTime("2024-04-29 15:00", dateformat"yyyy-mm-dd HH:MM") - Hour(timezone)
-date2 = DateTime("2024-04-30 10:00", dateformat"yyyy-mm-dd HH:MM") - Hour(timezone)
+date1 = DateTime("2024-05-14 20:00", dateformat"yyyy-mm-dd HH:MM") - Hour(timezone)
+date2 = DateTime("2024-05-15 10:00", dateformat"yyyy-mm-dd HH:MM") - Hour(timezone)
 
 to2(m) = m > 9 ? "$m" : "0$m"
 
 # http://image.nmc.cn/product/2023/04/27/RDCP/SEVP_AOC_RDCP_SLDAS3_ECREF_ACCN_L88_PI_20230427025400000.PNG
 
-const BaseURL = "https://liable-shipments-nest-voltage.trycloudflare.com"; #"http://image.nmc.cn"
+const BaseURL = "https://nh-appendix-other-cyber.trycloudflare.com"; #"http://image.nmc.cn"
 function getLargeStc(partName, time)
 
     # parts = [['part1', 'ANWC'], ['part2', 'ANCN'], ['part3', 'ANEC'], ['part4', 'ASWC'], ['华中', 'ACCN'], ['part6', 'AECN'], ['华南', 'ASCN']];
@@ -34,7 +34,7 @@ lastimg = nothing
 img = @lift begin
     try
         cur_time = date1 + Minute($time)
-        src = getLargeStc("ACCN", cur_time)
+        src = getLargeStc("ANCN", cur_time)
         
         println("downloading " * src)
         io = Downloads.download(src, IOBuffer()) # "https://current.sinaapp.com/CORS/?csurl=" * encodeURIComponent0(src)
@@ -61,9 +61,9 @@ image!(ax1, img)
 #save("radar1.png", fig)
 
 timestamps = 0:6:Minute(date2 - date1).value
-framerate = 1
+framerate = 5
 
 # https://docs.makie.org/stable/api/#record
-record(fig, "radar-hunan-20240430.mp4", timestamps; framerate) do t
+record(fig, "radar-henan-20240514.mp4", timestamps; framerate) do t
     time[] = t
 end
